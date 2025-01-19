@@ -8,7 +8,7 @@ before_install:
   - docker build -t nimroda/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run -e CI=true nimroda1/react-test npm test
+  - docker run -e CI=true nimroda/react-test npm test
 
 after_success:
   - docker build -t nimroda/multi-client ./client
