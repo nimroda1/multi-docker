@@ -1,0 +1,24 @@
+sudo: required
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - docker build -t nimroda/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true nimroda/react-test npm test
+
+after_success:
+  - docker build -t nimroda/multi-client ./client
+  - docker build -t nimroda/multi-nginx ./nginx
+  - docker build -t nimroda/multi-server ./server
+  - docker build -t nimroda/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push nimroda/multi-client
+  - docker push nimroda/multi-nginx
+  - docker push nimroda/multi-server
+  - docker push nimroda/multi-worker
